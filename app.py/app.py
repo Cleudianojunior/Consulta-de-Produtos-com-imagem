@@ -17,7 +17,6 @@ def carregar_dados():
         df = pd.DataFrame(columns=["Código", "Descrição", "Rua", "Imagem do produto"])
     df.columns = df.columns.str.strip()
     return df
-st.write(df)
 
 # Inicializar session_state para armazenar os dados
 if "df_produto" not in st.session_state:
