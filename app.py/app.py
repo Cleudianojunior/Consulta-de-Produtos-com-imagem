@@ -5,15 +5,17 @@ import os
 # Definir caminho do arquivo CSV
 csv_path = "datasets/produtos.csv"
 
+# Verificar se o arquivo CSV existe
+if not os.path.exists(csv_path):
+    st.error(f"Arquivo CSV não encontrado no caminho: {csv_path}")
+    st.stop()
+
 # Função para carregar os dados do CSV para a sessão
 def carregar_dados():
-    if os.path.exists(csv_path):
-        try: 
-            df = pd.read_csv(csv_path, delimiter=",", encoding="utf-8", on_bad_lines='skip', quotechar='"' )
-        except pd.errors.ParserError as e:
-            st.error(f"Erro de carregar CSV: {e}")
-            df = pd.DataFrame(columns=["Código", "Descrição", "Rua", "Imagem do produto"])
-    else:
+    try:
+        df = pd.read_csv(csv_path, delimiter=",", encoding="utf-8", on_bad_lines='skip', quotechar='"')
+    except pd.errors.ParserError as e:
+        st.error(f"Erro ao carregar CSV: {e}")
         df = pd.DataFrame(columns=["Código", "Descrição", "Rua", "Imagem do produto"])
     df.columns = df.columns.str.strip()
     return df
@@ -27,15 +29,15 @@ df_produto = st.session_state.df_produto
 st.set_page_config(layout="wide")
 st.title("📋 Lista de Produtos Mobit")
 
-# criar colunas
+# Criar colunas
 col1, col2 = st.columns([3, 1])
 
-# coluna com o arquivo CSV interativo
+# Coluna com o arquivo CSV interativo
 with col1:
     edited_df_produto = st.data_editor(df_produto, num_rows="dynamic")
     st.session_state.df_produto = edited_df_produto
 
-# coluna de carregamento e atualização da foto por código
+# Coluna de carregamento e atualização da foto por código
 with col2:
     st.subheader("📸 Atualizar Imagens do Produto")
     uploaded_files = st.file_uploader("Faça upload de até 3 imagens", type=["png", "jpg", "jpeg"], accept_multiple_files=True, key="multi_upload")
@@ -58,7 +60,7 @@ with col2:
         st.session_state.df_produto = df_produto
         st.success("✅ Imagens vinculadas ao produto com sucesso!")
 
-# botão para salvar imagem e alterações no arquivo CSV
+# Botão para salvar imagem e alterações no arquivo CSV
 if st.button("Salvar Alterações na planilha"):
     st.session_state.df_produto.to_csv(csv_path, index=False)
     st.success("✅ Alterações salvas permanentemente!")
@@ -66,8 +68,7 @@ if st.button("Salvar Alterações na planilha"):
 # 🔹 Barra lateral para pesquisa
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
 
-
-# resultado da pesquisa
+# Resultado da pesquisa
 if df_pesquisa:
     filtro = df_produto[df_produto["Código"].astype(str).str.contains(df_pesquisa, case=False, na=False)]
     
@@ -81,7 +82,7 @@ if df_pesquisa:
             if pd.notna(row["Imagem do produto"]):
                 img_list = row["Imagem do produto"].split(";")
                 cols = st.columns(len(img_list))
-                for col, img_path in zip (cols, img_list):
+                for col, img_path in zip(cols, img_list):
                     if os.path.exists(img_path):
                         col.image(img_path, width=400)
                     else:
