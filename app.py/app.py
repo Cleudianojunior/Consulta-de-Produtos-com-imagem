@@ -66,7 +66,6 @@ if st.button("Salvar Alterações na planilha"):
 # 🔹 Barra lateral para pesquisa
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
 
-st.sidebar.image("imagens_pagina/LOGO_MOBIT.png", use_container_width=True)
 
 # resultado da pesquisa
 if df_pesquisa:
