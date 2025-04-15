@@ -2,6 +2,19 @@ import streamlit as st
 import pandas as pd
 import os
 
+# Configuração de caminhos SEGUROS
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Pega o diretório do app.py
+CSV_DIR = os.path.join(BASE_DIR, "datasets")          # Caminho absoluto para datasets
+IMG_DIR = os.path.join(BASE_DIR, "imagens_produtos")  # Caminho absoluto para imagens
+CSV_PATH = os.path.join(CSV_DIR, "produtos.csv")      # Caminho completo do CSV
+
+# Garante que as pastas existam
+os.makedirs(CSV_DIR, exist_ok=True)
+os.makedirs(IMG_DIR, exist_ok=True)
+
+
+
+
 # Configurações iniciais
 st.set_page_config(layout="wide")
 st.title("📋 Lista de Produtos Mobit")
@@ -14,22 +27,29 @@ os.makedirs(img_dir, exist_ok=True)
 
 # Função para carregar os dados
 def carregar_dados():
-    if os.path.exists(csv_path):
-        try:
-            df = pd.read_csv(csv_path, delimiter=",", encoding="utf-8", 
-                           on_bad_lines='skip', quotechar='"',
-                           dtype={"Código": str, "Descrição": str, "Rua": str, "Imagem do produto": str})
-            
-            required_cols = ["Código", "Descrição", "Rua", "Imagem do produto"]
-            for col in required_cols:
+    try:
+        if os.path.exists(CSV_PATH):
+            df = pd.read_csv(
+                CSV_PATH,
+                delimiter=",",
+                encoding="utf-8",
+                on_bad_lines="skip",
+                quotechar='"',
+                dtype={"Código": str, "Descrição": str, "Rua": str, "Imagem do produto": str}
+            )
+
+            # Garante que as colunas obrigatórias existam
+            for col in ["Código", "Descrição", "Rua", "Imagem do produto"]:
                 if col not in df.columns:
                     df[col] = None
-            
+
             return df
-        except Exception as e:
-            st.error(f"Erro ao carregar CSV: {str(e)}")
-            return pd.DataFrame(columns=required_cols)
-    else:
+
+        # Se o arquivo não existir, cria um DataFrame vazio
+        return pd.DataFrame(columns=["Código", "Descrição", "Rua", "Imagem do produto"])
+
+    except Exception as e:
+        st.error(f"🚨 Erro ao carregar dados: {str(e)}")
         return pd.DataFrame(columns=["Código", "Descrição", "Rua", "Imagem do produto"])
 
 # Inicializar session_state
@@ -69,43 +89,56 @@ with col2:
         "Selecione o código do produto", 
         df_produto["Código"].astype(str).unique()
     )
-    
+
     if uploaded_files and produto_selecionado:
         try:
             img_paths = []
-            for i, file in enumerate(uploaded_files[:3]):
-                safe_name = "".join(c for c in file.name if c.isalnum() or c in ('_', '.')).rstrip()
-                img_filename = f"{produto_selecionado}_{i+1}_{safe_name}"
-                img_path = os.path.join(img_dir, img_filename)
-                
-                with open(img_path, "wb") as f:
+
+            for i, file in enumerate(uploaded_files[:3]):  # Limita a 3 imagens
+                # Remove caracteres perigosos do nome do arquivo
+                nome_seguro = "".join([c for c in file.name if c.isalnum() or c in ('.', '_')]).rstrip()
+                nome_arquivo = f"{produto_selecionado}_{i + 1}_{nome_seguro}"
+                caminho_imagem = os.path.join(IMG_DIR, nome_arquivo)
+
+                # Salva o arquivo
+                with open(caminho_imagem, "wb") as f:
                     f.write(file.getbuffer())
-                
-                if os.path.exists(img_path):
-                    img_paths.append(img_path)
+
+                # Verifica se o arquivo foi salvo
+                if os.path.exists(caminho_imagem):
+                    img_paths.append(caminho_imagem)
                 else:
-                    st.error(f"Falha ao salvar: {img_filename}")
-            
+                    st.warning(f"Arquivo não pôde ser salvo: {nome_arquivo}")
+
+            # Atualiza o DataFrame
             if img_paths:
                 mask = df_produto["Código"].astype(str) == produto_selecionado
-                current_images = df_produto.loc[mask, "Imagem do produto"].iloc[0]
-                if pd.notna(current_images):
-                    img_paths = current_images.split(";") + img_paths
-                
+                imagens_existentes = df_produto.loc[mask, "Imagem do produto"].iloc[0]
+
+                # Combina novas imagens com existentes (se houver)
+                if pd.notna(imagens_existentes):
+                    img_paths = imagens_existentes.split(";") + img_paths
+
                 df_produto.loc[mask, "Imagem do produto"] = ";".join(img_paths)
                 st.session_state.df_produto = df_produto
-                st.success(f"{len(img_paths)} imagem(ns) salva(s) com sucesso!")
+                st.success(f"✅ {len(img_paths)} imagem(ns) salvas com sucesso!")
+
         except Exception as e:
-            st.error(f"Erro ao processar imagens: {str(e)}")
+            st.error(f"❌ Falha no upload: {str(e)}")
 
 # Botão de salvamento
-if st.button("💾 Salvar Alterações na planilha"):
+if st.button("💾 Salvar Alterações", type="primary"):
     try:
-        st.session_state.df_produto.to_csv(csv_path, index=False)
-        st.success("✅ Alterações salvas permanentemente!")
-    except Exception as e:
-        st.error(f"Erro ao salvar CSV: {str(e)}")
+        # Cria o diretório se não existir (redundante, mas seguro)
+        os.makedirs(CSV_DIR, exist_ok=True)
 
+        # Salva o CSV
+        st.session_state.df_produto.to_csv(CSV_PATH, index=False)
+        st.toast("Dados salvos com sucesso!", icon="✅")
+
+    except Exception as e:
+        st.error(f"❌ Falha ao salvar: {str(e)}")
+        st.error(f"Verifique permissões em: {CSV_DIR}")
 # Barra lateral
 st.sidebar.image("imagens_pagina/LOGO_MOBIT.png", use_container_width=True)
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
@@ -120,18 +153,20 @@ if df_pesquisa:
             st.write(f"**Código:** {row['Código']}")
             st.write(f"**Descrição:** {row['Descrição']}")
             st.write(f"**Rua:** {row['Rua']}")
-            
+
             if pd.notna(row["Imagem do produto"]):
-                img_list = row["Imagem do produto"].split(";")
-                cols = st.columns(len(img_list))
-                for col, img_path in zip(cols, img_list):
-                    try:
-                        if os.path.exists(img_path):
-                            col.image(img_path, width=300)
-                        else:
-                            col.error(f"Imagem não encontrada: {os.path.basename(img_path)}")
-                    except Exception as e:
-                        col.error(f"Erro ao carregar imagem: {str(e)}")
+                img_list = [img for img in row["Imagem do produto"].split(";") if img.strip()]
+
+                if img_list:
+                    cols = st.columns(len(img_list))
+                    for col, img_path in zip(cols, img_list):
+                        try:
+                            if os.path.exists(img_path):
+                                col.image(img_path, use_column_width=True)
+                            else:
+                                col.warning(f"Imagem ausente: {os.path.basename(img_path)}")
+                        except Exception as e:
+                            col.error(f"Erro ao carregar: {str(e)}")
     else:
         st.warning("🚨 Nenhum produto encontrado com esse código.")
 else:
