@@ -94,7 +94,7 @@ with col2:
         try:
             img_paths = []
 
-            for i, file in enumerate(uploaded_files[:1]):  # Limita a 3 imagens
+            for i, file in enumerate(uploaded_files[:3]):  # Limita a 3 imagens
                 # Remove caracteres perigosos do nome do arquivo
                 nome_seguro = "".join([c for c in file.name if c.isalnum() or c in ('.', '_')]).rstrip()
                 nome_arquivo = f"{produto_selecionado}{i + 1}{nome_seguro}"
@@ -115,7 +115,7 @@ with col2:
                 mask = df_produto["Código"].astype(str) == produto_selecionado
                 imagens_existentes = df_produto.loc[mask, "Imagem do produto"].iloc[0]
 
-                # Combina novas imagens com existentes (se houver)
+              
                 
 
                 df_produto.loc[mask, "Imagem do produto"] = ";".join(img_paths)
