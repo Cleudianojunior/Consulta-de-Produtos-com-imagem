@@ -140,7 +140,7 @@ if st.button("💾 Salvar Alterações", type="primary"):
         st.error(f"❌ Falha ao salvar: {str(e)}")
         st.error(f"Verifique permissões em: {CSV_DIR}")
 # Barra lateral
-st.sidebar.image(print(os.path.abspath("imagens_pagina/LOGO_MOBIT.png"), use_container_width=True)
+st.sidebar.image(os.path.abspath("imagens_pagina/LOGO_MOBIT.png"), use_container_width=True)
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
 
 # Resultado da pesquisa
