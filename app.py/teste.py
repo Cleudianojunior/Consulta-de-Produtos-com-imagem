@@ -149,9 +149,9 @@ if df_pesquisa:
     if not filtro.empty:
         st.subheader("📌 Resultado da pesquisa:")
         for _, row in filtro.iterrows():
-            st.write(f"**Código:** {row['Código']}")
-            st.write(f"**Descrição:** {row['Descrição']}")
             st.write(f"**Rua:** {row['Rua']}")
+            st.write(f"**Codigo:** {row['Código']}")
+            st.write(f"**Descrição:** {row['Descrição']}")
 
             if pd.notna(row["Imagem do produto"]):
                 img_list = [img for img in row["Imagem do produto"].split(";") if img.strip()]
