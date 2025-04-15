@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
 import os
+from PIL import Image
 
 # Configuração de caminhos SEGUROS
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Pega o diretório do app.py
+BASE_DIR = os.path.dirname(os.path.abspath("produtos.csv"))  # Pega o diretório do app.py
 CSV_DIR = os.path.join(BASE_DIR, "datasets")          # Caminho absoluto para datasets
 IMG_DIR = os.path.join(BASE_DIR, "imagens_produtos")  # Caminho absoluto para imagens
 CSV_PATH = os.path.join(CSV_DIR, "produtos.csv")      # Caminho completo do CSV
@@ -97,8 +98,8 @@ with col2:
             for i, file in enumerate(uploaded_files[:3]):  # Limita a 3 imagens
                 # Remove caracteres perigosos do nome do arquivo
                 nome_seguro = "".join([c for c in file.name if c.isalnum() or c in ('.', '_')]).rstrip()
-                nome_arquivo = f"{produto_selecionado}_{i + 1}_{nome_seguro}"
-                caminho_imagem = os.path.join(IMG_DIR, nome_arquivo)
+                nome_arquivo = f"{produto_selecionado}{i + 1}{nome_seguro}"
+                caminho_imagem = os.path.join(img_dir, nome_arquivo)
 
                 # Salva o arquivo
                 with open(caminho_imagem, "wb") as f:
@@ -116,8 +117,8 @@ with col2:
                 imagens_existentes = df_produto.loc[mask, "Imagem do produto"].iloc[0]
 
                 # Combina novas imagens com existentes (se houver)
-                if pd.notna(imagens_existentes):
-                    img_paths = imagens_existentes.split(";") + img_paths
+                
+                    
 
                 df_produto.loc[mask, "Imagem do produto"] = ";".join(img_paths)
                 st.session_state.df_produto = df_produto
@@ -140,7 +141,9 @@ if st.button("💾 Salvar Alterações", type="primary"):
         st.error(f"❌ Falha ao salvar: {str(e)}")
         st.error(f"Verifique permissões em: {CSV_DIR}")
 # Barra lateral
+imagem = Image.open("imagens_pagina/LOGO_MOBIT.png")
 
+st.sidebar.image(imagem, use_container_width=True)
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
 
 # Resultado da pesquisa
@@ -150,9 +153,9 @@ if df_pesquisa:
     if not filtro.empty:
         st.subheader("📌 Resultado da pesquisa:")
         for _, row in filtro.iterrows():
-            st.write(f"**Código:** {row['Código']}")
-            st.write(f"**Descrição:** {row['Descrição']}")
-            st.write(f"**Rua:** {row['Rua']}")
+            st.write(f"*Código:* {row['Código']}")
+            st.write(f"*Descrição:* {row['Descrição']}")
+            st.write(f"*Rua:* {row['Rua']}")
 
             if pd.notna(row["Imagem do produto"]):
                 img_list = [img for img in row["Imagem do produto"].split(";") if img.strip()]
@@ -162,7 +165,7 @@ if df_pesquisa:
                     for col, img_path in zip(cols, img_list):
                         try:
                             if os.path.exists(img_path):
-                                col.image(img_path, use_column_width=True)
+                                col.image(img_path, width=300)
                             else:
                                 col.warning(f"Imagem ausente: {os.path.basename(img_path)}")
                         except Exception as e:
