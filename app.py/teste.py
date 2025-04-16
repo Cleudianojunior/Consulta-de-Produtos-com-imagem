@@ -2,6 +2,35 @@ import streamlit as st
 import pandas as pd
 import os
 
+def check_password():
+    if "password" not in st.session_state:
+        st.session_state["PASSWORD"] = None
+
+    if st.session_state["password"] != st.secrets["PASSWORD"]:
+        password_placeholder = st.empty()
+        password = password_placeholder.text_input("Digite a senha:", type="PASSWORD")
+
+        if password == st.secrets["PASSWORD"]:
+            st.session_state["PASSWORD"] = password
+            password_placeholder.empty()
+            return True
+        else:
+            if password != "":
+                st.error("Senha incorreta!")
+            return False
+    else:
+        return True
+
+if not check_password():
+    st.stop()  # Impede o resto do app de rodar
+
+# Se a senha estiver correta, o app continua:
+st.title("Aplicação Protegida por Senha")
+st.write("Bem-vindo! Você acessou com sucesso.")
+
+
+
+
 # Configuração de caminhos SEGUROS
 BASE_DIR = os.path.dirname(os.path.abspath("produtos.csv"))  # Pega o diretório do app.py
 CSV_DIR = os.path.join(BASE_DIR, "datasets")          # Caminho absoluto para datasets
