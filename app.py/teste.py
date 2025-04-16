@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import cv2
 
 # Configuração de caminhos SEGUROS
 BASE_DIR = os.path.dirname(os.path.abspath("produtos.csv"))  # Pega o diretório do app.py
@@ -139,6 +140,12 @@ if st.button("💾 Salvar Alterações", type="primary"):
         st.error(f"❌ Falha ao salvar: {str(e)}")
         st.error(f"Verifique permissões em: {CSV_DIR}")
 # Barra lateral
+
+im = cv2.imread('imagens_pagina/LOGO_MOBIT.png')
+im_resize = cv2.resize(im, (500, 500))
+is_success, im_buf_arr = cv2.imencode(".jpg", im_resize)
+byte_im = im_buf_arr.tobytes()
+st.sidebar.image(byte_im, caption=['Imagem Original'])
 
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
 
