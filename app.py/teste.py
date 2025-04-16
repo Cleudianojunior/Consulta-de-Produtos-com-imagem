@@ -161,7 +161,7 @@ if df_pesquisa:
                     for col, img_path in zip(cols, img_list):
                         try:
                             if os.path.exists(img_path):
-                                col.image(img_path, use_column_width=True)
+                                col.image(img_path, width=400)
                             else:
                                 col.warning(f"Imagem ausente: {os.path.basename(img_path)}")
                         except Exception as e:
