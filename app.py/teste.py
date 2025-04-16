@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-import cv2
 
 # Configuração de caminhos SEGUROS
 BASE_DIR = os.path.dirname(os.path.abspath("produtos.csv"))  # Pega o diretório do app.py
