@@ -141,11 +141,6 @@ if st.button("💾 Salvar Alterações", type="primary"):
         st.error(f"Verifique permissões em: {CSV_DIR}")
 # Barra lateral
 
-im = cv2.imread('imagens_pagina/LOGO_MOBIT.png')
-im_resize = cv2.resize(im, (500, 500))
-is_success, im_buf_arr = cv2.imencode(".jpg", im_resize)
-byte_im = im_buf_arr.tobytes()
-st.sidebar.image(im)
 
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
 
