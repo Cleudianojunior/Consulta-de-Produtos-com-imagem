@@ -168,8 +168,8 @@ logo_html = """
 .mobit-logo .circle::before {
     content: '';
     position: absolute;
-    top: 10px;
-    left: 15px;
+    top: 8px;
+    left: 8px;
     width: 30px;
     height: 30px;
     background-color: #f5a623; /* laranja */
