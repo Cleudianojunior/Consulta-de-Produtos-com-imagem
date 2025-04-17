@@ -152,7 +152,7 @@ logo_html = """
     font-weight: bold;
     font-size: 48px;
     color: #002f6c; /* azul escuro */
-    width: 300px
+    width: 500px
 }
 .mobit-logo .circle {
     background-color: #002f6c;
