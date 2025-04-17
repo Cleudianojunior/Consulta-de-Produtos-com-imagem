@@ -182,7 +182,7 @@ logo_html = """
 """
 
 # Exibe no Streamlit
-st.sidebar.markdown(logo_html, unsafe_allow_html=True)
+st.sidebar.markdown(logo_html, unsafe_allow_html=True, width=300)
 
 
 
