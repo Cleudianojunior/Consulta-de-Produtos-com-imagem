@@ -169,9 +169,9 @@ logo_html = """
     content: '';
     position: absolute;
     top: 6px;
-    left: 6px;
-    width: 40px;
-    height: 40px;
+    left: 7px;
+    width: 36px;
+    height: 36px;
     background-color: #f5a623; /* laranja */
     border-radius: 50%;
 
