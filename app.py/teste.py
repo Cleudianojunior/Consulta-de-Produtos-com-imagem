@@ -150,7 +150,7 @@ logo_html = """
 .mobit-logo {
     font-family: 'Arial', sans-serif;
     font-weight: bold;
-    font-size: 48px;
+    font-size: 100px;
     color: #002f6c; /* azul escuro */
     width: 100%;
     display: block;
@@ -182,7 +182,7 @@ logo_html = """
 """
 
 # Exibe no Streamlit
-st.sidebar.markdown(logo_html, unsafe_allow_html=True, width=300)
+st.sidebar.markdown(logo_html, unsafe_allow_html=True)
 
 
 
