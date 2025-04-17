@@ -152,6 +152,7 @@ logo_html = """
     font-weight: bold;
     font-size: 48px;
     color: #002f6c; /* azul escuro */
+    width: 300px
 }
 .mobit-logo .circle {
     background-color: #002f6c;
@@ -180,7 +181,7 @@ logo_html = """
 """
 
 # Exibe no Streamlit
-st.sidebar.markdown(logo_html, unsafe_allow_html=True, width=400)
+st.sidebar.markdown(logo_html, unsafe_allow_html=True)
 
 
 
