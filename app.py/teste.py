@@ -158,8 +158,8 @@ logo_html = """
 .mobit-logo .circle {
     background-color: #002f6c;
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     display: inline-block;
     position: relative;
     margin: 0 4px;
@@ -170,8 +170,8 @@ logo_html = """
     position: absolute;
     top: 6px;
     left: 6px;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     background-color: #f5a623; /* laranja */
     border-radius: 50%;
 
