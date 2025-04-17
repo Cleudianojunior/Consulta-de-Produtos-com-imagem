@@ -163,6 +163,7 @@ logo_html = """
     display: inline-block;
     position: relative;
     margin: 0 4px;
+    font-size: 100px;
 }
 .mobit-logo .circle::before {
     content: '';
@@ -173,6 +174,7 @@ logo_html = """
     height: 50px;
     background-color: #f5a623; /* laranja */
     border-radius: 50%;
+    font-size: 100px;
 }
 </style>
 
