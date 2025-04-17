@@ -158,8 +158,8 @@ logo_html = """
 .mobit-logo .circle {
     background-color: #002f6c;
     border-radius: 50%;
-    width: 49px;
-    height: 49px;
+    width: 50px;
+    height: 50px;
     display: inline-block;
     position: relative;
     margin: 0 4px;
