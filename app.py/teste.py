@@ -169,7 +169,7 @@ logo_html = """
     content: '';
     position: absolute;
     top: 6px;
-    left: 7px;
+    left: 10px;
     width: 36px;
     height: 36px;
     background-color: #f5a623; /* laranja */
