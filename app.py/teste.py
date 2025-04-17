@@ -168,7 +168,7 @@ logo_html = """
 .mobit-logo .circle::before {
     content: '';
     position: absolute;
-    top: 15px;
+    top: 10px;
     left: 15px;
     width: 30px;
     height: 30px;
