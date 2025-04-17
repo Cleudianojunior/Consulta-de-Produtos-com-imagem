@@ -145,6 +145,68 @@ if st.button("💾 Salvar Alterações", type="primary"):
         st.error(f"Verifique permissões em: {CSV_DIR}")
 # Barra lateral
 
+logo_html = """
+<style>
+.mobit-logo {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: 48px;
+    color: #002f6c; /* azul escuro */
+}
+.mobit-logo .circle {
+    background-color: #002f6c;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    position: relative;
+    margin: 0 4px;
+}
+.mobit-logo .circle::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 18px;
+    height: 18px;
+    background-color: #f5a623; /* laranja */
+    border-radius: 50%;
+}
+</style>
+
+<div class="mobit-logo">
+    m<span class="circle"></span>bit
+</div>
+"""
+
+# Exibe no Streamlit
+st.markdown(logo_html, unsafe_allow_html=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
 
