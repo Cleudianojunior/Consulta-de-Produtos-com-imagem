@@ -3,60 +3,37 @@ import pandas as pd
 import os
 
 # Definir caminho do arquivo CSV
-
+csv_path = "datasets/produtos.csv"
 
 # Função para carregar os dados do CSV para a sessão
-def carregar_dados_para_tabela(df):
-    tabela = PrettyTable()
-    tabela.field_names = ["Rua", "Código", "Descrição", "Imagem do produto"]
-    
-    for _, row in df.iterrows():
-        tabela.add_row([
-            row["Rua"],
-            row["Código"],
-            row["Descrição"],
-            row["Imagem do produto"]
-        ])
-    
-    return tabela
+def carregar_dados():
+    if os.path.exists(csv_path):
+        try: 
+            df = pd.read_csv(csv_path, delimiter=",", encoding="utf-8", on_bad_lines='skip', quotechar='"' )
+        except pd.errors.ParserError as e:
+            st.error(f"Erro de carregar CSV: {e}")
+            df = pd.DataFrame(columns=["Código", "Descrição", "Rua", "Imagem do produto"])
+    else:
+        df = pd.DataFrame(columns=["Código", "Descrição", "Rua", "Imagem do produto"])
+    df.columns = df.columns.str.strip()
+    return df
 
-# Na seção onde você exibe os dados, substitua o st.data_editor por:
+# Inicializar session_state para armazenar os dados
+if "df_produto" not in st.session_state:
+    st.session_state.df_produto = carregar_dados()
+
+df_produto = st.session_state.df_produto
+
+st.set_page_config(layout="wide")
+st.title("📋 Lista de Produtos Mobit")
+
+# criar colunas
+col1, col2 = st.columns([3, 1])
+
+# coluna com o arquivo CSV interativo
 with col1:
-    st.subheader("📋 Tabela de Produtos")
-    
-    # Converter DataFrame para PrettyTable
-    tabela_produtos = carregar_dados_para_tabela(df_produto)
-    
-    # Exibir a tabela formatada
-    st.text(tabela_produtos.get_string())
-    
-    # Adicionar controles para edição (simplificado)
-    with st.expander("✏️ Editar Produto"):
-        codigo_editar = st.selectbox(
-            "Selecione o código para editar",
-            df_produto["Código"].unique()
-        )
-        
-        # Preencher formulário com dados existentes
-        produto = df_produto[df_produto["Código"] == codigo_editar].iloc[0]
-        
-        with st.form(f"form_editar_{codigo_editar}"):
-            nova_rua = st.text_input("Rua", produto["Rua"])
-            novo_codigo = st.text_input("Código", produto["Código"])
-            nova_descricao = st.text_area("Descrição", produto["Descrição"])
-            novas_imagens = st.text_input("Imagens (separadas por ;)", produto["Imagem do produto"])
-            
-            if st.form_submit_button("Salvar Alterações"):
-                # Atualizar o DataFrame
-                mask = df_produto["Código"] == codigo_editar
-                df_produto.loc[mask, "Rua"] = nova_rua
-                df_produto.loc[mask, "Código"] = novo_codigo
-                df_produto.loc[mask, "Descrição"] = nova_descricao
-                df_produto.loc[mask, "Imagem do produto"] = novas_imagens
-                
-                st.session_state.df_produto = df_produto
-                st.success("Alterações salvas!")
-                st.experimental_rerun()
+    edited_df_produto = st.data_editor(df_produto, num_rows="dynamic")
+    st.session_state.df_produto = edited_df_produto
 
 # coluna de carregamento e atualização da foto por código
 with col2:
@@ -89,6 +66,7 @@ if st.button("Salvar Alterações na planilha"):
 # 🔹 Barra lateral para pesquisa
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
 
+st.sidebar.image("imagens_pagina/LOGO_MOBIT.png", use_container_width=True)
 
 # resultado da pesquisa
 if df_pesquisa:
@@ -113,7 +91,6 @@ if df_pesquisa:
         st.warning("🚨 Nenhum produto encontrado com esse código.")
 else:
     st.info("🔎 Digite um código de produto na barra lateral para pesquisar.")
-
 
 
 
