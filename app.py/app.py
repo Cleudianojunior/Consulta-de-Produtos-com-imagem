@@ -56,7 +56,7 @@ with col1:
                 
                 st.session_state.df_produto = df_produto
                 st.success("Alterações salvas!")
-                st.experimental_rerun()uto
+                st.experimental_rerun()
 
 # coluna de carregamento e atualização da foto por código
 with col2:
