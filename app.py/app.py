@@ -10,16 +10,7 @@ st.title("📋 Lista de Produtos Mobit")
 
 # Dados iniciais (embutidos no código)
 DADOS_INICIAIS = {
-    "Código": ["1-A", "2-B", "3-C"1-A
-
-1-B
-1-B
-
-1-C
-1-C
-1-C
-
-1-D],
+    "Código": ["1-A", "2-B", "3-C"1-A],
     "Descrição": ["TV LED 50\" Smart", "Notebook i7", "Smartphone Android"],
     "Rua": ["A1", "B2", "C3"],
     "Imagem do produto": [None, None, None]
