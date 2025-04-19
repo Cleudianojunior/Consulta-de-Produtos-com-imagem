@@ -60,7 +60,7 @@ with col2:
 
 # botão para salvar imagem e alterações no arquivo CSV
 if st.button("Salvar Alterações na planilha"):
-    st.session_state.df_produto.to_csv(csv_path, index=False)
+    st.session_state.df_produto.to_csv(csv_path, index=True)
     st.success("✅ Alterações salvas permanentemente!")
 
 # 🔹 Barra lateral para pesquisa
