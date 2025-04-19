@@ -10,6 +10,19 @@ import os
 st.set_page_config(layout="wide")
 st.title("📋 Lista de Produtos Mobit")
 
+dados = {
+    "Nome": ["João", "Maria", "Carlos"],
+    "Idade": [25, 30, 22],
+    "Cidade": ["São Paulo", "Rio de Janeiro", "Belo Horizonte"]
+}
+
+tabela = pd.DataFrame(dados)
+
+# Exibindo a tabela
+print(tabela)
+
+# Salvando em CSV
+tabela.to_csv("dados.csv", index=False)
 
 # Função para carregar os dado
 def carregar_dados():
