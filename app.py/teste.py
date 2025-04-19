@@ -10,13 +10,8 @@ import os
 st.set_page_config(layout="wide")
 st.title("📋 Lista de Produtos Mobit")
 
-# Definir caminhos
-csv_path = os.path.abspath("datasets/produtos.csv")
-img_dir = os.path.abspath("imagens_produtos")
-os.makedirs(os.path.dirname(csv_path), exist_ok=True)
-os.makedirs(img_dir, exist_ok=True)
 
-# Função para carregar os dados
+# Função para carregar os dado
 def carregar_dados():
     try:
         if os.path.exists(CSV_PATH):
