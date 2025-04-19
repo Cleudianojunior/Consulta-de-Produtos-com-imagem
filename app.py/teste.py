@@ -6,20 +6,6 @@ import os
 
 
 
-
-# Configuração de caminhos SEGUROS
-BASE_DIR = os.path.dirname(os.path.abspath("produtos.csv"))  # Pega o diretório do app.py
-CSV_DIR = os.path.join(BASE_DIR, "datasets")          # Caminho absoluto para datasets
-IMG_DIR = os.path.join(BASE_DIR, "imagens_produtos")  # Caminho absoluto para imagens
-CSV_PATH = os.path.join(CSV_DIR, "produtos.csv")      # Caminho completo do CSV
-
-# Garante que as pastas existam
-os.makedirs(CSV_DIR, exist_ok=True)
-os.makedirs(IMG_DIR, exist_ok=True)
-
-
-
-
 # Configurações iniciais
 st.set_page_config(layout="wide")
 st.title("📋 Lista de Produtos Mobit")
