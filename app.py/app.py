@@ -143,7 +143,7 @@ if st.button("💾 Salvar Alterações", type="primary"):
 # Barra lateral
 
 
-st.sidebar.image(imagem, use_container_width=True)
+
 df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
 
 # Resultado da pesquisa
