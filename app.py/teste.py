@@ -2,54 +2,23 @@ import streamlit as st
 import pandas as pd
 import os
 
-
-
-
+# Configuração de pastas
+IMG_DIR = os.path.abspath("imagens_produtos")
+os.makedirs(IMG_DIR, exist_ok=True)
 
 # Configurações iniciais
+dados_iniciais = [
+    {"Rua": "Rua A", "Código": "1001", "Descrição": "Cabo USB-C 1m", "Imagem do produto": ""},
+    {"Rua": "Rua B", "Código": "1002", "Descrição": "Carregador 20W", "Imagem do produto": ""},
+    {"Rua": "Rua C", "Código": "1003", "Descrição": "Suporte de Celular para carro", "Imagem do produto": ""},
+]
+
+# Função de carregamento de dados estáticos
+def carregar_dados():
+    return pd.DataFrame(dados_iniciais)
+
 st.set_page_config(layout="wide")
 st.title("📋 Lista de Produtos Mobit")
-
-dados = {
-    "Nome": ["João", "Maria", "Carlos"],
-    "Idade": [25, 30, 22],
-    "Cidade": ["São Paulo", "Rio de Janeiro", "Belo Horizonte"]
-}
-
-tabela = pd.DataFrame(dados)
-
-# Exibindo a tabela
-print(tabela)
-
-# Salvando em CSV
-tabela.to_csv("dados.csv", index=False)
-
-# Função para carregar os dado
-def carregar_dados():
-    try:
-        if os.path.exists(CSV_PATH):
-            df = pd.read_csv(
-                CSV_PATH,
-                delimiter=",",
-                encoding="utf-8",
-                on_bad_lines="skip",
-                quotechar='"',
-                dtype={"Rua": str, "Código": str, "Descrição": str, "Imagem do produto": str}
-            )
-
-            # Garante que as colunas obrigatórias existam
-            for col in ["Rua", "Código", "Descrição", "Imagem do produto"]:
-                if col not in df.columns:
-                    df[col] = None
-
-            return df
-
-        # Se o arquivo não existir, cria um DataFrame vazio
-        return pd.DataFrame(columns=["Rua", "Código", "Descrição", "Imagem do produto"])
-
-    except Exception as e:
-        st.error(f"🚨 Erro ao carregar dados: {str(e)}")
-        return pd.DataFrame(columns=["Rua", "Código", "Descrição", "Imagem do produto"])
 
 # Inicializar session_state
 if "df_produto" not in st.session_state:
@@ -83,69 +52,47 @@ with col2:
         accept_multiple_files=True, 
         key="multi_upload"
     )
-    
-    produto_selecionado = st.selectbox(
-        "Selecione o código do produto", 
-        df_produto["Código"].astype(str).unique()
-    )
 
-    if uploaded_files and produto_selecionado:
-        try:
-            img_paths = []
+    if not df_produto.empty:
+        produto_selecionado = st.selectbox(
+            "Selecione o código do produto", 
+            df_produto["Código"].astype(str).unique()
+        )
 
-            for i, file in enumerate(uploaded_files[:3]):  # Limita a 3 imagens
-                # Remove caracteres perigosos do nome do arquivo
-                nome_seguro = "".join([c for c in file.name if c.isalnum() or c in ('.', '_')]).rstrip()
-                nome_arquivo = f"{produto_selecionado}{i + 1}{nome_seguro}"
-                caminho_imagem = os.path.join(IMG_DIR, nome_arquivo)
+        if uploaded_files and produto_selecionado:
+            try:
+                img_paths = []
 
-                # Salva o arquivo
-                with open(caminho_imagem, "wb") as f:
-                    f.write(file.getbuffer())
+                for i, file in enumerate(uploaded_files[:3]):
+                    nome_seguro = "".join([c for c in file.name if c.isalnum() or c in ('.', '_')]).rstrip()
+                    nome_arquivo = f"{produto_selecionado}_{i + 1}_{nome_seguro}"
+                    caminho_imagem = os.path.join(IMG_DIR, nome_arquivo)
 
-                # Verifica se o arquivo foi salvo
-                if os.path.exists(caminho_imagem):
-                    img_paths.append(caminho_imagem)
-                else:
-                    st.warning(f"Arquivo não pôde ser salvo: {nome_arquivo}")
+                    with open(caminho_imagem, "wb") as f:
+                        f.write(file.getbuffer())
 
-            # Atualiza o DataFrame
-            if img_paths:
-                mask = df_produto["Código"].astype(str) == produto_selecionado
-                imagens_existentes = df_produto.loc[mask, "Imagem do produto"].iloc[0]
+                    if os.path.exists(caminho_imagem):
+                        img_paths.append(caminho_imagem)
+                    else:
+                        st.warning(f"Arquivo não pôde ser salvo: {nome_arquivo}")
 
-              
-                
+                if img_paths:
+                    mask = df_produto["Código"].astype(str) == produto_selecionado
+                    df_produto.loc[mask, "Imagem do produto"] = ";".join(img_paths)
+                    st.session_state.df_produto = df_produto
+                    st.success(f"✅ {len(img_paths)} imagem(ns) salvas com sucesso!")
 
-                df_produto.loc[mask, "Imagem do produto"] = ";".join(img_paths)
-                st.session_state.df_produto = df_produto
-                st.success(f"✅ {len(img_paths)} imagem(ns) salvas com sucesso!")
+            except Exception as e:
+                st.error(f"❌ Falha no upload: {str(e)}")
 
-        except Exception as e:
-            st.error(f"❌ Falha no upload: {str(e)}")
-
-# Botão de salvamento
-if st.button("💾 Salvar Alterações", type="primary"):
-    try:
-        # Cria o diretório se não existir (redundante, mas seguro)
-        os.makedirs(CSV_DIR, exist_ok=True)
-
-        # Salva o CSV
-        st.session_state.df_produto.to_csv(CSV_PATH, index=False)
-        st.toast("Dados salvos com sucesso!", icon="✅")
-
-    except Exception as e:
-        st.error(f"❌ Falha ao salvar: {str(e)}")
-        st.error(f"Verifique permissões em: {CSV_DIR}")
-# Barra lateral
-
+# Barra lateral - Logo + busca
 logo_html = """
 <style>
 .mobit-logo {
     font-family: 'Arial', sans-serif;
     font-weight: bold;
     font-size: 100px;
-    color: #002f6c; /* azul escuro */
+    color: #002f6c;
     width: 100%;
     display: block;
 }
@@ -157,7 +104,6 @@ logo_html = """
     display: inline-block;
     position: relative;
     margin: 0 4px;
-    
 }
 .mobit-logo .circle::before {
     content: '';
@@ -166,29 +112,22 @@ logo_html = """
     left: 8px;
     width: 30px;
     height: 30px;
-    background-color: #f5a623; /* laranja */
+    background-color: #f5a623;
     border-radius: 50%;
-
 }
 </style>
-
 <div class="mobit-logo">
     m<span class="circle"></span>bit
 </div>
 """
-
-# Exibe no Streamlit
 st.sidebar.markdown(logo_html, unsafe_allow_html=True)
 
+# Campo de busca
+codigo_busca = st.sidebar.text_input("🔍 Digite o código do produto:")
 
+if codigo_busca:
+    filtro = df_produto[df_produto["Código"].astype(str).str.contains(codigo_busca, case=False, na=False)]
 
-
-df_pesquisa = st.sidebar.text_input("🔍 Digite o código do produto:")
-
-# Resultado da pesquisa
-if df_pesquisa:
-    filtro = df_produto[df_produto["Código"].astype(str).str.contains(df_pesquisa, case=False, na=False)]
-    
     if not filtro.empty:
         st.subheader("📌 Resultado da pesquisa:")
         for _, row in filtro.iterrows():
