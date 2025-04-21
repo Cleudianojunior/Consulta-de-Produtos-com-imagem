@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 
-dados = pd.read_csv('datasets/produtos.csv')
-print(dados)
+
 # Configuração de caminhos SEGUROS
 BASE_DIR = os.path.dirname(os.path.abspath("produtos.csv"))  # Pega o diretório do app.py
 CSV_DIR = os.path.join(BASE_DIR, "datasets")          # Caminho absoluto para datasets
@@ -26,6 +25,9 @@ csv_path = os.path.abspath("datasets/produtos.csv")
 img_dir = os.path.abspath("imagens_produtos")
 os.makedirs(os.path.dirname(csv_path), exist_ok=True)
 os.makedirs(img_dir, exist_ok=True)
+
+dados = pd.read_csv('datasets/produtos.csv')
+print(dados)
 
 # Função para carregar os dados
 def carregar_dados():
