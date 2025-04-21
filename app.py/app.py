@@ -26,8 +26,6 @@ img_dir = os.path.abspath("imagens_produtos")
 os.makedirs(os.path.dirname(csv_path), exist_ok=True)
 os.makedirs(img_dir, exist_ok=True)
 
-dados = pd.read_csv('datasets/produtos.csv')
-print(dados)
 
 # Função para carregar os dados
 def carregar_dados():
