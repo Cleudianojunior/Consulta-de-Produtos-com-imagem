@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
 import os
-from PIL import Image
 
+dados = pd.read_csv('datasets/produtos.csv')
+print(dados)
 # Configuração de caminhos SEGUROS
 BASE_DIR = os.path.dirname(os.path.abspath("produtos.csv"))  # Pega o diretório do app.py
 CSV_DIR = os.path.join(BASE_DIR, "datasets")          # Caminho absoluto para datasets
