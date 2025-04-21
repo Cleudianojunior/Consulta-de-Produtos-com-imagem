@@ -41,18 +41,18 @@ def carregar_dados():
             )
 
             # Garante que as colunas obrigatórias existam
-            for col in ["Código", "Descrição", "Rua", "Imagem do produto"]:
+            for col in ["Rua", "Código", "Descrição", "Imagem do produto"]:
                 if col not in df.columns:
                     df[col] = None
 
             return df
 
         # Se o arquivo não existir, cria um DataFrame vazio
-        return pd.DataFrame(columns=["Código", "Descrição", "Rua", "Imagem do produto"])
+        return pd.DataFrame(columns=["Rua", "Código", "Descrição", "Imagem do produto"])
 
     except Exception as e:
         st.error(f"🚨 Erro ao carregar dados: {str(e)}")
-        return pd.DataFrame(columns=["Código", "Descrição", "Rua", "Imagem do produto"])
+        return pd.DataFrame(columns=["Rua", "Código", "Descrição", "Imagem do produto"])
 
 # Inicializar session_state
 if "df_produto" not in st.session_state:
